@@ -77,3 +77,11 @@ visit: http://localhost:8080 for airflow dashborad
 vpc.tf | provisions a VPC, subnets and availability zones using the AWS VPC Module. 
 security-groups.tf | provisions the security groups used by the EKS cluster.
 eks-cluster.tf | provisions all the resources (AutoScaling Groups, etc...) 
+### Configure Airflow Dags
+
+fields in values.yaml | function
+------------ | -------------
+image / url | docker hub repo path
+
+
+
