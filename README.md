@@ -53,7 +53,7 @@ service:
   ## PostgreSQL Database to create.
   postgresDatabase: airflow
 ```
-- Step 3: 
+- Step 3: configure airflow dag via dockerhub pull
 ```
   image:
     ##
