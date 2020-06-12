@@ -841,7 +841,7 @@ dags:
 
       ## the git sync interval in seconds
       ##
-      refreshTime: 60
+      refreshTime: 20
 
   ## configs for the git-clone container
   ##
