@@ -761,7 +761,7 @@ dags:
     ## EXAMPLE: (SSH)
     ##   url: "ssh://git@github.com:torvalds/linux.git"
     ##
-    url: ""
+    url: "https://github.com/GGtray/airflow-dags.git"
 
     ## the branch/tag/sha1 which we clone
     ##
@@ -817,7 +817,7 @@ dags:
     gitSync:
       ## enable the git-sync sidecar container
       ##
-      enabled: false
+      enabled: true
 
       ## resource requests/limits for the git-sync container
       ##
