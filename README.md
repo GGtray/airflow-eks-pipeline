@@ -1,7 +1,9 @@
 # blockchainETL-airflow-eks-cluster
 Building an airflow on Amazon Elastic Kubernetes Service
 ## What is this about?
-
+Code in this repository along with this Introduction is able to:
+1. define and deploy a customized k8s cluster on AWS EKS(Elastic Kubernetes Service)
+2. run airflow dags auto-synchronized with a customized github repository URL (in this case, this address point to https://github.com/GGtray/airflow-dags.git)
 ## How to use it? (on MacOS)
 ### Before using it, you will need
 - An AWS account (with enough money in it, eks costs, add IAM role premisson via configuring policy)
@@ -17,58 +19,90 @@ AWS Secret Access Key [None]: YOUR_AWS_SECRET_ACCESS_KEY
 Default region name [None]: YOUR_AWS_REGION
 Default output format [None]: json
 ```
+this step makes you login your aws account on your computer, thus charge you after your cluster spinned up.
 - Step 2: Provision the EKS cluster
 ```
 $ terraform init
 $ terraform apply
 ```
+wait with patience, it is pretty normal to run for 30min.
 - Step 3: Configure kubectl
 ```
 $ aws eks --region us-east-2 update-kubeconfig --name [name in the output]
 $ terraform apply
 ```
+this step will asure your kubectl is connected to the cluster, run
+```
+$ kubectl cluster-info
+```
+to check this connection out!
+### (Option) check cluster through DashBoard
+
 ### Run airflow
-- Step 1: Create and switch name space
+- Step 1: configure vales.yml
 ```
-$ kubectl create namespace airflow
-$ kubectl config set-context dev1 --namespace=airflow
-```
-- Step 2: Configure helm chart for Postgres 
-```
-$ git clone https://github.com/helm/charts.git
 $ cd charts/stable/airflow
 ```
-configure vales.yml
+change as such: 
 ```
-## PostgreSQL port
-service:
-    port: 5432
-  ## PostgreSQL User to create.
-  postgresUser: postgres
+## configs for the DAG git repository & sync container
   ##
-  ## PostgreSQL Password for the new user.
-  ## If not set, a random 10 characters password will be used.
-  postgresPassword: airflow
-  ##
-  ## PostgreSQL Database to create.
-  postgresDatabase: airflow
-```
-- Step 3: configure airflow dag via dockerhub pull
-```
-  image:
+  git:
+    ## url of the git repository
     ##
-    ## docker-airflow image
-    repository: [the docker hub repo path]
+    ## EXAMPLE: (HTTP)
+    ##   url: "https://github.com/torvalds/linux.git"
     ##
-    ## image tag
+    ## EXAMPLE: (SSH)
+    ##   url: "ssh://git@github.com:torvalds/linux.git"
+    ##
+    url: "https://github.com/GGtray/airflow-dags.git"
+
+    ## the branch/tag/sha1 which we clone
+    ##
+    ref: master
+
+   ...
+    gitSync:
+      ## enable the git-sync sidecar container
+      ##
+      enabled: true
+
+      ## resource requests/limits for the git-sync container
+      ##
+      ## NOTE:
+      ## - when `workers.autoscaling` is true, YOU MUST SPECIFY a resource request
+      ##
+      ## EXAMPLE:
+      ##   resources:
+      ##     requests:
+      ##       cpu: "50m"
+      ##       memory: "64Mi"
+      ##
+      resources: {}
 ```
-- Step 4: start up airflow and check
+- Step 2: start up airflow and check on the airflow Web UI
 ```
-$ helm install stable/airflow -f values.yaml
-$ kubectl get service
-$ kubectl port-forward service/[your airflow web service name] 8080:8080
+helm install stable/airflow -f values.yaml --generate-name
+export POD_NAME=$(kubectl get pods --namespace default -l "component=web,app=airflow" -o jsonpath="      {.items[0].metadata.name}")
+echo http://127.0.0.1:8080
+kubectl port-forward --namespace default $POD_NAME 8080:8080
 ```
 visit: http://localhost:8080 for airflow dashborad
+
+- Optional: 
+if you need to update this values.yaml file, use below
+```
+kubectl get service
+# find your airflow release id here
+helm upgrade <airflow release id> -f values.yaml stable/airflow
+```
+if you wanna see if the git-sync is working currently
+```
+kubectl get pods
+# find your pod id running airflow-*-web here
+kubectl logs <airflow-*-web id> git-sync
+```
 
 ## How to configure it?
 ### Configure Kubernetes (via conigure .tf files below)
@@ -81,7 +115,8 @@ eks-cluster.tf | provisions all the resources (AutoScaling Groups, etc...)
 
 fields in values.yaml | function
 ------------ | -------------
-image / url | docker hub repo path
-
+dags/ git / url | git repository
+dags/ gitSync/enable | true
+dags/gitSync/refreshTime | 10/60 s
 
 
