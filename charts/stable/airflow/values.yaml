@@ -452,12 +452,12 @@ workers:
   ## resource requests/limits for the airflow worker Pods
   ##
   ## EXAMPLE:
-  ##   resources:
-  ##     requests:
-  ##       cpu: "1000m"
-  ##       memory: "2Gi"
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
   ##
-  resources: {}
+#  resources: {}
 
   ## the number of workers Pods to run
   ##
@@ -497,21 +497,21 @@ workers:
   ## configs for the HorizontalPodAutoscaler of the worker Pods
   ##
   ## EXAMPLE:
-  ##   autoscaling:
-  ##     enabled: true
-  ##     maxReplicas: 16
-  ##     metrics:
-  ##     - type: Resource
-  ##       resource:
-  ##         name: memory
-  ##         target:
-  ##           type: Utilization
-  ##           averageUtilization: 80
-  ##
   autoscaling:
-    enabled: false
-    maxReplicas: 2
-    metrics: []
+    enabled: true
+    maxReplicas: 16
+    metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  ##
+#  autoscaling:
+#    enabled: false
+#    maxReplicas: 2
+#    metrics: []
 
   ## the number of seconds to wait (in bash) before starting each worker container
   ##
@@ -528,14 +528,14 @@ workers:
     ## NOTE:
     ## - sets AIRFLOW__CELERY__WORKER_CONCURRENCY
     ##
-    instances: 1
+    instances: 10
 
     ## if we should wait for tasks to finish on a celery worker before SIGTERM of Pod
     ##
     ## NOTE:
     ## - `workers.terminationPeriod` is still the overall timeout before worker Pods are killed using SIGKILL
     ##
-    gracefullTermination: false
+    gracefullTermination: true
 
   ## how many seconds to wait for tasks on a worker to finish before SIGKILL
   ##
@@ -825,12 +825,12 @@ dags:
       ## - when `workers.autoscaling` is true, YOU MUST SPECIFY a resource request
       ##
       ## EXAMPLE:
-      ##   resources:
-      ##     requests:
-      ##       cpu: "50m"
-      ##       memory: "64Mi"
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
       ##
-      resources: {}
+#      resources: {}
 
       ## the docker image for the git-sync container
       image:
