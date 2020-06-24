@@ -499,14 +499,14 @@ workers:
   ## EXAMPLE:
   autoscaling:
     enabled: true
-    maxReplicas: 16
+    maxReplicas: 7
     metrics:
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 80
+          averageUtilization: 40
   ##
 #  autoscaling:
 #    enabled: false
@@ -761,7 +761,7 @@ dags:
     ## EXAMPLE: (SSH)
     ##   url: "ssh://git@github.com:torvalds/linux.git"
     ##
-    url: "https://github.com/GGtray/airflow-dags.git"
+    url: "https://github.com/GGtray/ETL-dags.git"
 
     ## the branch/tag/sha1 which we clone
     ##
