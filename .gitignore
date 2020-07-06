@@ -30,3 +30,5 @@ override.tf.json
 .idea
 
 kubeconfig_training-eks-7jieYgqP
+kubeconfig_Lizi-eks-4HVK6u51
+.gitignore

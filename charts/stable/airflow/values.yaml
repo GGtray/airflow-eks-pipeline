@@ -454,8 +454,8 @@ workers:
   ## EXAMPLE:
   resources:
     requests:
-      cpu: "100m"
-      memory: "100Mi"
+      cpu: "500m"
+      memory: "1Gi"
   ##
 #  resources: {}
 
@@ -499,14 +499,14 @@ workers:
   ## EXAMPLE:
   autoscaling:
     enabled: true
-    maxReplicas: 7
+    maxReplicas: 12
     metrics:
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 90
   ##
 #  autoscaling:
 #    enabled: false
@@ -528,7 +528,7 @@ workers:
     ## NOTE:
     ## - sets AIRFLOW__CELERY__WORKER_CONCURRENCY
     ##
-    instances: 10
+    instances: 5
 
     ## if we should wait for tasks to finish on a celery worker before SIGTERM of Pod
     ##
