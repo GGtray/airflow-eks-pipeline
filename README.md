@@ -1,5 +1,6 @@
-# blockchainETL-airflow-eks-cluster
-Building an airflow on Amazon Elastic Kubernetes Service
+# Air8s 
+Build a platform that allows ETL pipline deployed scaled automatically. 
+ETL pipeline is managed by airflow running on Amazon Elastic Kubernetes Service
 ## What is this about?
 Code in this repository along with this Introduction is able to:
 1. define and deploy a customized k8s cluster on AWS EKS(Elastic Kubernetes Service)
